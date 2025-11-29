@@ -23,5 +23,6 @@ func main() {
 	router.GET("/items", itemController.FindAll)
 	router.GET("/items/:id", itemController.FindById)
 	router.POST("/items", itemController.Create)
+	router.PUT("/items/:id", itemController.Update)
 	router.Run("localhost:8080")
 }
