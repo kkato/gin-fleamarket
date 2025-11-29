@@ -2,7 +2,10 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/kkato/gin-fleamarket/controllers"
 	"github.com/kkato/gin-fleamarket/models"
+	"github.com/kkato/gin-fleamarket/repositories"
+	"github.com/kkato/gin-fleamarket/services"
 )
 
 func main() {
@@ -12,14 +15,12 @@ func main() {
 		{ID: 3, Name: "商品3", Price: 3000, Description: "説明3", SoldOut: false},
 	}
 
+	itemRepository := repositories.NewItemMemoryRepository(items)
+	itemService := services.NewItemService(itemRepository)
+	itemController := controllers.NewItemController(itemService)
+
 	router := gin.Default()
-	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-	router.GET("/items", func(c *gin.Context) {
-		c.JSON(200, items)
-	})
-	router.Run("localhost:8080") // listens on 0.0.0.0:8080 by default
+	router.GET("/items", itemController.FindAll)
+	router.GET("/items/:id", itemController.FindById)
+	router.Run("localhost:8080")
 }
