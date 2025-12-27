@@ -1,9 +1,11 @@
 package main
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/kkato/gin-fleamarket/controllers"
 	"github.com/kkato/gin-fleamarket/infra"
+	"github.com/kkato/gin-fleamarket/middlewares"
 
 	// "github.com/kkato/gin-fleamarket/models"
 	"github.com/kkato/gin-fleamarket/repositories"
@@ -30,14 +32,16 @@ func main() {
 	authController := controllers.NewAuthController(authService)
 
 	router := gin.Default()
+	router.Use(cors.Default())
 	itemRouter := router.Group("/items")
+	itemRouterWithAuth := router.Group("/items", middlewares.AuthMiddleware(authService))
 	authRouter := router.Group("/auth")
 
 	itemRouter.GET("", itemController.FindAll)
-	itemRouter.GET("/:id", itemController.FindById)
-	itemRouter.POST("", itemController.Create)
-	itemRouter.PUT("/:id", itemController.Update)
-	itemRouter.DELETE("/:id", itemController.Delete)
+	itemRouterWithAuth.GET("/:id", itemController.FindById)
+	itemRouterWithAuth.POST("", itemController.Create)
+	itemRouterWithAuth.PUT("/:id", itemController.Update)
+	itemRouterWithAuth.DELETE("/:id", itemController.Delete)
 
 	authRouter.POST("/signup", authController.Signup)
 	authRouter.POST("/login", authController.Login)
