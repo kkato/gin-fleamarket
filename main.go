@@ -6,23 +6,14 @@ import (
 	"github.com/kkato/gin-fleamarket/controllers"
 	"github.com/kkato/gin-fleamarket/infra"
 	"github.com/kkato/gin-fleamarket/middlewares"
+	"gorm.io/gorm"
 
 	// "github.com/kkato/gin-fleamarket/models"
 	"github.com/kkato/gin-fleamarket/repositories"
 	"github.com/kkato/gin-fleamarket/services"
 )
 
-func main() {
-	infra.Initialize()
-	db := infra.SetupDB()
-
-	// items := []models.Item{
-	// 	{ID: 1, Name: "商品1", Price: 1000, Description: "説明1", SoldOut: false},
-	// 	{ID: 2, Name: "商品2", Price: 2000, Description: "説明2", SoldOut: true},
-	// 	{ID: 3, Name: "商品3", Price: 3000, Description: "説明3", SoldOut: false},
-	// }
-
-	// itemRepository := repositories.NewItemMemoryRepository(items)
+func setupRouter(db *gorm.DB) *gin.Engine {
 	itemRepository := repositories.NewItemRepository(db)
 	itemService := services.NewItemService(itemRepository)
 	itemController := controllers.NewItemController(itemService)
@@ -45,5 +36,13 @@ func main() {
 
 	authRouter.POST("/signup", authController.Signup)
 	authRouter.POST("/login", authController.Login)
+
+	return router
+}
+
+func main() {
+	infra.Initialize()
+	db := infra.SetupDB()
+	router := setupRouter(db)
 	router.Run("localhost:8080")
 }
