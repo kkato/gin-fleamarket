@@ -29,7 +29,6 @@ Ginフレームワークを使用したフリーマーケットの商品管理AP
 - **データベース**: PostgreSQL
 - **認証**: JWT (golang-jwt/jwt)
 - **パスワードハッシュ**: bcrypt
-- **コンテナ**: Docker / Docker Compose
 
 ## アーキテクチャ
 
